@@ -1,0 +1,104 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class IntersectionSimulator {
+
+    // Define the intersection parameters
+    private static final int NUM_PHASES = 4;
+    private static final int[] GREEN_TIMES = {30, 20, 35, 25}; // Duration of green light for each phase in seconds
+    private static final int MAX_WAIT_TIME = 120; // Maximum time a vehicle can wait at the intersection in seconds
+    private static final double EMISSIONS_FACTOR = 0.1; // Emissions factor for vehicles in grams per second
+
+    private List<Vehicle> vehicles = new ArrayList<>();
+
+    public static void main(String[] args) {
+        IntersectionSimulator simulator = new IntersectionSimulator();
+        simulator.runSimulation();
+    }
+
+    public void runSimulation() {
+        // Start the simulation loop
+        while (true) {
+            // Generate new vehicles
+            int numVehicles = generateVehicles();
+            // Run the traffic light cycle
+            runCycle();
+            // Update the waiting time for each vehicle
+            updateWaitingTimes();
+            // Remove vehicles that have exceeded the maximum wait time
+            removeExceededVehicles();
+            // Check if the user wants to exit the simulation
+            if (userWantsToExit()) {
+                break;
+            }
+        }
+        // Generate the report
+        generateReport();
+    }
+
+    private int generateVehicles() {
+        // Generate a random number of vehicles between 0 and 10
+        Random rand = new Random();
+        int numVehicles = rand.nextInt(11);
+        // Add the vehicles to the list
+        for (int i = 0; i < numVehicles; i++) {
+            Vehicle vehicle = new Vehicle();
+            vehicles.add(vehicle);
+        }
+        return numVehicles;
+    }
+
+    private void runCycle() {
+        // Loop through each phase of the traffic light cycle
+        for (int phase = 0; phase < NUM_PHASES; phase++) {
+            // Set the green light for this phase
+            setGreenLight(phase);
+            // Loop through each vehicle and check if it can cross the intersection
+            for (Vehicle vehicle : vehicles) {
+                if (vehicle.canCrossIntersection(phase)) {
+                    // Calculate the emissions for the vehicle
+                    double emissions = vehicle.getWaitingTime() * EMISSIONS_FACTOR;
+                    // Update the total emissions for this phase
+                    totalEmissions[phase] += emissions;
+                    // Remove the vehicle from the list
+                    vehiclesToRemove.add(vehicle);
+                }
+            }
+        }
+    }
+
+    private void setGreenLight(int phase) {
+        // Set the green light for the specified phase
+        // ...
+    }
+
+    private void updateWaitingTimes() {
+        // Increase the waiting time for each vehicle by 1 second
+        for (Vehicle vehicle : vehicles) {
+            vehicle.incrementWaitingTime();
+        }
+    }
+
+    private void removeExceededVehicles() {
+        // Remove vehicles that have exceeded the maximum wait time
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.getWaitingTime() > MAX_WAIT_TIME) {
+                vehiclesToRemove.add(vehicle);
+            }
+        }
+        vehicles.removeAll(vehiclesToRemove);
+        vehiclesToRemove.clear();
+    }
+
+    private boolean userWantsToExit() {
+        // Check if the user has clicked the exit button
+        // ...
+    }
+
+    private void generateReport() {
+        // Calculate the total number of vehicles crossed per phase and the average waiting time to cross
+        int[] totalCrossed = new int[NUM]
